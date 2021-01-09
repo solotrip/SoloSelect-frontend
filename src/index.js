@@ -12,6 +12,8 @@ import Path from "path";
 
 import cityNames from "./citynames.json";
 
+import axios from "axios";
+
 let photoCount = 0;
 
 let cityCount = 0;
@@ -105,7 +107,7 @@ const Body = () => {
   const [maxPage, setMaxPage] = useState(2);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
   const [selecteds, setSelecteds] = useState([]);
-  const [city, setCity] = useState("oslo");
+  const [city, setCity] = useState("mexico-city-mexico_Q1489");
   const [imageMode, setImageMode] = useState("city-card");
 
   const onchange = (data) => {
@@ -121,8 +123,31 @@ const Body = () => {
     }
   };
 
+  async function sendToBackend(
+    id,
+    name,
+    key,
+    value,
+    type,
+    city,
+    width,
+    height
+  ) {
+    await axios.post("http://localhost:5001/photos", {
+      id: id,
+      name: name,
+      key: key,
+      value: value,
+      type: type,
+      city: city,
+      width: width,
+      height: height,
+    });
+  }
+
   const uploadFile = () => {
     selecteds.forEach((selected) => {
+      let fileName;
       //download to local.
       //selected.content.urls.regular
       console.log("uploading...");
@@ -140,6 +165,7 @@ const Body = () => {
           })
           .then((blob) => {
             console.log("image data blob is", blob);
+            fileName = city + "_" + imageMode + "_" + selected.content.id;
             var file = new File(
               [blob],
               city + "_" + imageMode + "_" + selected.content.id
@@ -150,6 +176,18 @@ const Body = () => {
               accessKeyId: "AKIAJNXJ25NNWLXKAZQA",
               secretAccessKey: "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",
             });
+
+            //send to backend.
+            sendToBackend(
+              selected.content.id,
+              fileName,
+              fileName,
+              `https://soloselect.s3.eu-central-1.amazonaws.com/${fileName}`,
+              imageMode,
+              city,
+              selected.content.width,
+              selected.content.height
+            );
           });
       }, 100);
     });
@@ -345,8 +383,10 @@ const Body = () => {
           Which city to upload?
           <select
             className="selector"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(e) => {
+              setCity(e.target.value);
+              console.log("city changed to:", city);
+            }}
           >
             {Object.keys(cityNames).map((city, k) => (
               <option value={cityNames[city]["name"]}>
