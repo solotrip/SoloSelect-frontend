@@ -3,6 +3,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./style.css";
 import { createApi } from "unsplash-js";
 
+import Select from "react-select";
+
 import S3FileUpload from "react-s3";
 
 import download from "downloadjs";
@@ -11,6 +13,8 @@ import base64js from "base64-js";
 import Path from "path";
 
 import cityNames from "./citynames.json";
+
+import cityOptions from "./cityoptions.json";
 
 import axios from "axios";
 
@@ -131,7 +135,8 @@ const Body = () => {
     type,
     city,
     width,
-    height
+    height,
+    content
   ) {
     await axios.post("http://localhost:5001/photos", {
       id: id,
@@ -142,6 +147,7 @@ const Body = () => {
       city: city,
       width: width,
       height: height,
+      content: content,
     });
   }
 
@@ -186,7 +192,8 @@ const Body = () => {
               imageMode,
               city,
               selected.content.width,
-              selected.content.height
+              selected.content.height,
+              selected.content
             );
           });
       }, 100);
@@ -272,6 +279,8 @@ const Body = () => {
         });
     }
   };
+
+  const handleSelectedChange = () => {};
 
   useEffect(() => {
     api.search
@@ -376,11 +385,33 @@ const Body = () => {
               ))}
             </ul>
           </div>
+          <button
+            onClick={(e) => {
+              if (currentPage > 0) {
+                setCurrentPage(currentPage - 1);
+                searchPhotosv2(e, currentPage - 1, orientation);
+              }
+            }}
+          >
+            Previous Page
+          </button>
+          Page {currentPage} of {maxPage}
+          <button
+            onClick={(e) => {
+              if (currentPage < maxPage) {
+                setCurrentPage(currentPage + 1);
+                searchPhotosv2(e, currentPage + 1, orientation);
+              }
+            }}
+          >
+            Next Page
+          </button>
         </div>
         <div className="rightCol">
           <div className="selectedImages">Selected Images:{selectedImages}</div>
           <br />
           Which city to upload?
+          {/*
           <select
             className="selector"
             onChange={(e) => {
@@ -394,6 +425,17 @@ const Body = () => {
               </option>
             ))}
           </select>
+          */}
+          <Select
+            value={city}
+            onChange={(e) => {
+              setCity(e.label);
+              console.log("e is ", e.label);
+              console.log("city changed to:", city);
+            }}
+            isSearchable={true}
+            options={cityOptions}
+          />
           <br />
           <br />
           As a City Card or Gallery(Carousel) ?
