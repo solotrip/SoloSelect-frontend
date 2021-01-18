@@ -83,6 +83,15 @@ body {
   object-fit: cover;
 }
 
+.img-city-card {
+  position: relative;
+  margin-bottom: 4px;
+  width: 250px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
 .credit {
   font-size: 12px;
   line-height: 15px;
@@ -101,20 +110,17 @@ body {
 
 .white-text {
   color: white;
-  padding-left: 10px;
 }
 
 .olive-text {
   color: olive;
-  padding-left: 10px;
+  padding-left: 0px;
 }
 
 .orange-text {
   color: cornflowerblue;
   font-weight: bold;
-  padding-left: 10px;
 }
 
 .normal-text {
-  padding-left: 10px;
 }

@@ -47,7 +47,7 @@ const orientationOptions = [
   },
 ];
 
-const PhotoComp = ({ photo, selectedImages, onchange }) => {
+const PhotoComp = ({ photo, selectedImages, onchange, showInSize }) => {
   const { user, urls, width, height } = photo;
 
   const [checkd, setCheckd] = useState(false);
@@ -79,7 +79,10 @@ const PhotoComp = ({ photo, selectedImages, onchange }) => {
         checked={checkd}
         onChange={handleChange}
       />
-      <img className="img" src={urls.regular} />
+      <img
+        className={showInSize == "city-card" ? "img-city-card" : "img"}
+        src={urls.regular}
+      />
       <a
         className="credit"
         target="_blank"
@@ -108,6 +111,7 @@ const Body = () => {
   const [data, setPhotosResponse] = useState(null);
   const [query, setQuery] = useState("");
   const [orientation, setOrientation] = useState("all");
+  const [showInSize, setShowInSize] = useState("original");
   const [currentPage, setCurrentPage] = useState(1);
   const [maxPage, setMaxPage] = useState(2);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
@@ -135,9 +139,9 @@ const Body = () => {
     array.forEach(function (val) {
       if (!obj[val])
         // create new property if property is not found
-        obj[val["wkd_id"]] = 1;
+        obj[val["city"]] = 1;
       // increment matched property by 1
-      else obj[val["wkd_id"]]++;
+      else obj[val["city"]]++;
     });
     console.log("object is:", obj);
   }
@@ -380,6 +384,16 @@ const Body = () => {
             placeholder="Choose an orientation option"
           />*/}
             </form>
+            Preview size:
+            <select
+              value={showInSize}
+              onChange={(e) => setShowInSize(e.target.value)}
+            >
+              <option value="original">Original</option>
+              <option value="city-card">CityCard</option>
+              <option value="gallery">Gallery</option>
+            </select>
+            <br />
             <button
               onClick={(e) => {
                 if (currentPage > 0) {
@@ -412,6 +426,7 @@ const Body = () => {
                       index={photoCount}
                       photoId={photo.id}
                       selectedImages={selectedImages}
+                      showInSize={showInSize}
                       onchange={(e) => {
                         onchange(e);
                         console.log("at child: ", selecteds);
@@ -503,19 +518,18 @@ const Body = () => {
             {serverImages && pushToItemCounter(serverImages)}
             {serverImages &&
               serverImages.map((photo) => {
-                !objHolder[photo.wkd_id]
-                  ? (objHolder[photo.wkd_id] = 1)
-                  : objHolder[photo.wkd_id]++;
+                !objHolder[photo.city]
+                  ? (objHolder[photo.city] = 1)
+                  : objHolder[photo.city]++;
               })}
 
             {Object.keys(objHolder).map((item, key) => (
               <li key={item} className="li">
-                <div />
                 <div className="colored-text-holder">
-                  <div className="olive-text">{item}</div>
                   <div className="orange-text">
                     {Object.values(objHolder)[key]}
                   </div>
+                  <div className="olive-text">{item}</div>
                 </div>
               </li>
             ))}
