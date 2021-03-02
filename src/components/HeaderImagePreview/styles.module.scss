@@ -1,0 +1,26 @@
+.preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 400px;
+}
+
+.image {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.selectButton {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
