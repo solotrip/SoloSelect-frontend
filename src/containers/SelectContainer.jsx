@@ -47,7 +47,7 @@ const SelectContainer = ({ onNext }) => {
   }, [handleNext])
 
   useEffect(() => {
-    handleReset()
+    handleNext()
   },[])
 
   return (
